@@ -1,4 +1,4 @@
-let frames = 0;
+let frames = 60;
 
 const efeitoSomPonto = new Audio();
 efeitoSomPonto.src = './efeitos/ponto.wav';
@@ -14,26 +14,6 @@ sprites.src = './sprites/sprites.png';
 
 const canvas = document.querySelector('canvas');
 const contexto = canvas.getContext('2d');
-
-
-const placar = {
-          
-          pontuação: 0,
-
-          desenha(){
-            contexto.font = "35px Roboto Slab";
-            contexto.fillStyle = "white";
-            contexto.align = "right";
-            contexto.fillText(`${placar.pontuação}`, canvas.width / 2, canvas.height / 2);
-          },
-
-          atualiza(){
-      
-          if(placar.pontuação >= 0){
-            placar.pontuação += 1;
-          };
-        },
-      };
 
 
 // [Plano de Fundo]
@@ -174,12 +154,15 @@ return flappyBird;
 }
 
 function criarCanos(){
+  
   const canos = {
     largura: 52,
     altura: 400,
     pontos: 0,
-    
-    chao: {
+    passou: false,
+    mostrarPontos: true,
+
+    chao: { 
       spriteX: 0,
       spriteY: 169
     },
@@ -194,7 +177,7 @@ function criarCanos(){
     desenha(){
       canos.pares.forEach(function(par){
         const yRandomCanos =  par.y;
-        const espacoEntreCanos = 140;
+        const espacoEntreCanos = 90;
 
         const canoCeuX = par.x;
         const canoCeuY = yRandomCanos;
@@ -229,11 +212,22 @@ function criarCanos(){
         }
 
       });
+           // Configurações do número
+      contexto.font = "55px VT323, monospace";
+      contexto.fillStyle = "#FFF"; // Cor do número (branco)
+      contexto.textBaseline = "middle";
+      contexto.textAlign = "center";
 
-      contexto.font = "35px Roboto Slab";
-      contexto.fillStyle = "white";
-      contexto.align = "right";
-      contexto.fillText(`${canos.pontos}`, 80, 50);
+      // Adiciona uma sombra para simular a borda
+      contexto.shadowColor = "#000"; // Cor da sombra (preto)
+      contexto.shadowBlur = 4; // Tamanho da sombra
+
+      // Desenha o texto da pontuação com a sombra (que simulará a borda)
+      contexto.fillText(`${canos.pontos}`, canvas.width / 2, 25);
+
+      // Limpa as configurações de sombra para evitar que afetem outros elementos desenhados
+      contexto.shadowColor = "transparent";
+      contexto.shadowBlur = 0;
     },
 
     colisaoCanos(par){
@@ -276,18 +270,14 @@ function criarCanos(){
          }
 
          if(par.x + canos.largura <= 0){
-          canos.pares.shift();
+            canos.pares.shift();
          }
 
-         if(par.x + canos.largura < globais.flappyBird.x){
-          
-            console.log(canos.pontos++);
-        
-          
-          
-          efeitoSomPonto.play();
+         if(par.x + canos.largura < globais.flappyBird.x && !par.passou){
+            canos.pontos += 1;
+            par.passou = true;
+            efeitoSomPonto.play();
          }
-
       }); 
     },
   };
@@ -377,6 +367,7 @@ telas.GAMEOVER = {
   },
 
   atualiza(){
+    globais.canos.mostrarPontos = false;
     console.log("Para mudar a tela, após o gameover!");
   },
 
