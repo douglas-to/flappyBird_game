@@ -223,7 +223,7 @@ function criarCanos(){
       contexto.shadowBlur = 4; // Tamanho da sombra
 
       // Desenha o texto da pontuação com a sombra (que simulará a borda)
-      contexto.fillText(`${canos.pontos}`, canvas.width / 2, 25);
+      contexto.fillText(`${canos.pontos}`, canvas.width / 2 + 150, 25);
 
       // Limpa as configurações de sombra para evitar que afetem outros elementos desenhados
       contexto.shadowColor = "transparent";
